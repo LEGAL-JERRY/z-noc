@@ -1,0 +1,39 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: black;
+  color: white;
+  font-family: monospace;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border-bottom: 1px solid #222;
+  padding: 10px;
+  text-align: left;
+}
+
+.panel {
+  border: 1px solid #222;
+  padding: 16px;
+  background: #050505;
+}
+
+.status-green {
+  color: #00ff88;
+}
+
+.status-yellow {
+  color: #ffcc00;
+}
+
+.status-red {
+  color: #ff4444;
+}
