@@ -4,12 +4,12 @@ from app.api.routes import devices, incidents, assignments, properties, dashboar
 
 app = FastAPI(title="ZNOC Backend")
 
-# 1. CRITICAL: Allow your Vercel frontend to talk to this backend
+# CORS middleware configured specifically for your project URLs
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", 
-        "https://your-vercel-project-name.vercel.app" # Make sure to replace this with your real Vercel URL!
+        "https://z-noc.vercel.app"  # Your exact Vercel production domain
     ],
     allow_credentials=True,
     allow_methods=["*"],
