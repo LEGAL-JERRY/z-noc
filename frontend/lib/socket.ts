@@ -5,15 +5,15 @@ export function connectSocket(onMessage: (data: any) => void) {
   let isStopped = false;
   let intervalId: NodeJS.Timeout | null = null;
 
-  console.log("ZNOC Mode: Falling back to HTTP Polling to bypass Render limitations.");
+  console.log("ZNOC Mode: Fetching dashboard overview via HTTP Polling.");
 
   // Function that simulates the WebSocket onmessage stream using fetch
   const pollBackendData = async () => {
     if (isStopped) return;
 
     try {
-      // Points to a standard HTTP GET endpoint on your backend
-      const response = await fetch(`${API_URL}/api/ws-fallback`);
+      // FIXED: Points straight to your real Python route (/dashboard/overview)
+      const response = await fetch(`${API_URL}/dashboard/overview`);
       
       if (!response.ok) {
         throw new Error(`HTTP Error Status: ${response.status}`);
