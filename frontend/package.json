@@ -1,4 +1,3 @@
-
 {
   "name": "znoc-frontend",
   "private": true,
@@ -15,5 +14,9 @@
     "tailwindcss": "^3.4.10",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/node": "^22.5.4"
   }
 }
