@@ -1,32 +1,48 @@
 export function connectSocket(onMessage: (data: any) => void) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || ""
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+  
+  // Create a flag to track if the polling loop should stop
+  let isStopped = false;
+  let intervalId: NodeJS.Timeout | null = null;
 
-  const WS_URL = API_URL
-    .replace("https://", "wss://")
-    .replace("http://", "ws://")
+  console.log("ZNOC Mode: Falling back to HTTP Polling to bypass Render limitations.");
 
-  const socket = new WebSocket(`${WS_URL}/ws`)
+  // Function that simulates the WebSocket onmessage stream using fetch
+  const pollBackendData = async () => {
+    if (isStopped) return;
 
-  socket.onopen = () => {
-    console.log("WebSocket connected")
-  }
-
-  socket.onmessage = (event) => {
     try {
-      const data = JSON.parse(event.data)
-      onMessage(data)
+      // Points to a standard HTTP GET endpoint on your backend
+      const response = await fetch(`${API_URL}/api/ws-fallback`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP Error Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Pass the data cleanly back to your dashboard UI, exactly like socket.onmessage did
+      onMessage(data);
+
     } catch (err) {
-      console.error("WebSocket parse error", err)
+      console.error("Polling error or backend is sleeping:", err);
     }
-  }
+  };
 
-  socket.onerror = (err) => {
-    console.error("WebSocket error", err)
-  }
+  // Run the first fetch immediately when the dashboard loads
+  pollBackendData();
 
-  socket.onclose = () => {
-    console.log("WebSocket disconnected")
-  }
+  // Poll every 5 seconds (5000ms)
+  intervalId = setInterval(pollBackendData, 5000);
 
-  return socket
+  // Return a mock object so any calling code trying to run socket.close() won't crash
+  return {
+    close: () => {
+      console.log("Polling stopped");
+      isStopped = true;
+      if (intervalId) clearInterval(intervalId);
+    },
+    // Adding standard readyState property so your frontend stays happy
+    readyState: 1 // 1 means OPEN in WebSocket terms
+  };
 }
